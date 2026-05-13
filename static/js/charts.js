@@ -176,8 +176,8 @@ async function generateChart() {
                     legend: { labels: { color: colors.text } }
                 },
                 scales: {
-                    y: { grid: { color: colors.grid }, ticks: { color: colors.text } },
-                    x: { grid: { color: colors.grid }, ticks: { color: colors.text } }
+                    y: { title: { display: true, text: yColumn || 'Values', color: colors.text }, grid: { color: colors.grid }, ticks: { color: colors.text } },
+                    x: { title: { display: true, text: xColumn, color: colors.text }, grid: { color: colors.grid }, ticks: { color: colors.text } }
                 }
             }
         });
@@ -205,8 +205,15 @@ async function generateChart() {
 
     if (chartType !== 'pie' && chartType !== 'histogram') {
         chartConfig.options.scales = {
-            y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
-            x: { grid: { color: colors.grid }, ticks: { color: colors.text } }
+            y: { title: { display: true, text: yColumn || 'Values', color: colors.text }, beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
+            x: { title: { display: true, text: xColumn, color: colors.text }, grid: { color: colors.grid }, ticks: { color: colors.text } }
+        };
+    }
+
+    if (chartType === 'histogram') {
+        chartConfig.options.scales = {
+            y: { title: { display: true, text: 'Frequency', color: colors.text }, grid: { color: colors.grid }, ticks: { color: colors.text } },
+            x: { title: { display: true, text: xColumn, color: colors.text }, grid: { color: colors.grid }, ticks: { color: colors.text } }
         };
     }
 

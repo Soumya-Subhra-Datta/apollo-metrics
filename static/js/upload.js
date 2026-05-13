@@ -56,8 +56,9 @@ async function loadUserInfo() {
 document.getElementById('file-input').addEventListener('change', async function(e) {
     const file = this.files[0];
     if (!file) return;
-    if (!file.name.toLowerCase().endsWith('.csv')) {
-        document.getElementById('upload-status').innerHTML = '<div class="alert alert-error">Only CSV files are allowed.</div>';
+    const name = file.name.toLowerCase();
+    if (!name.endsWith('.csv') && !name.endsWith('.xls') && !name.endsWith('.xlsx')) {
+        document.getElementById('upload-status').innerHTML = '<div class="alert alert-error">Only CSV and Excel (.xls, .xlsx) files are allowed.</div>';
         return;
     }
     if (file.size > 50 * 1024 * 1024) {

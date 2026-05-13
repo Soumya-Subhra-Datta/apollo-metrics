@@ -20,7 +20,7 @@ def upload_file():
         return jsonify({'error': 'No file selected'}), 400
 
     if not allowed_file(file.filename):
-        return jsonify({'error': 'Invalid file type. Only CSV files are allowed.'}), 400
+        return jsonify({'error': 'Invalid file type. Only CSV and Excel (.xls, .xlsx) files are allowed.'}), 400
 
     try:
         config = Config()
@@ -29,10 +29,29 @@ def upload_file():
         file_path = os.path.join(config.UPLOAD_FOLDER, unique_filename)
         file.save(file_path)
 
-        df = pd.read_csv(file_path)
+        ext = original_filename.rsplit('.', 1)[1].lower()
+        if ext == 'csv':
+            df = pd.read_csv(file_path)
+        elif ext in ('xls', 'xlsx'):
+            try:
+                df = pd.read_excel(file_path)
+            except (ImportError, ValueError) as e:
+                os.remove(file_path)
+                return jsonify({'error': f'Excel support requires openpyxl/xlrd: {e}'}), 400
+            csv_path = file_path.rsplit('.', 1)[0] + '.csv'
+            try:
+                df.to_csv(csv_path, index=False)
+                os.remove(file_path)
+                file_path = csv_path
+            except Exception:
+                for p in [file_path, csv_path]:
+                    if os.path.exists(p):
+                        os.remove(p)
+                return jsonify({'error': 'Failed to convert Excel file to CSV.'}), 400
+
         if df.empty:
             os.remove(file_path)
-            return jsonify({'error': 'The uploaded CSV file is empty.'}), 400
+            return jsonify({'error': 'The uploaded file is empty.'}), 400
 
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -69,11 +88,11 @@ def upload_file():
     except pd.errors.EmptyDataError:
         if os.path.exists(file_path):
             os.remove(file_path)
-        return jsonify({'error': 'The uploaded CSV file is empty or corrupt.'}), 400
+        return jsonify({'error': 'The uploaded file is empty or corrupt.'}), 400
     except pd.errors.ParserError:
         if os.path.exists(file_path):
             os.remove(file_path)
-        return jsonify({'error': 'Could not parse the CSV file. Please check its format.'}), 400
+        return jsonify({'error': 'Could not parse the file. Please check its format.'}), 400
     except Exception as e:
         if os.path.exists(file_path):
             os.remove(file_path)

@@ -6,7 +6,7 @@ from flask import session, jsonify
 from werkzeug.utils import secure_filename
 
 
-ALLOWED_EXTENSIONS = {'csv'}
+ALLOWED_EXTENSIONS = {'csv', 'xls', 'xlsx'}
 
 
 def allowed_file(filename):

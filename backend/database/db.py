@@ -17,7 +17,8 @@ def get_db_connection():
             user=config.DB_USER,
             password=config.DB_PASSWORD,
             database=config.DB_NAME,
-            ssl_ca=_get_ssl_config(config).get('ca')
+            ssl_ca=_get_ssl_config(config).get('ca'),
+            connection_timeout=10
         )
         return conn
     except mysql.connector.Error as err:
@@ -32,7 +33,8 @@ def init_db():
             port=config.DB_PORT,
             user=config.DB_USER,
             password=config.DB_PASSWORD,
-            ssl_ca=_get_ssl_config(config).get('ca')
+            ssl_ca=_get_ssl_config(config).get('ca'),
+            connection_timeout=10
         )
         cursor = conn.cursor()
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {config.DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
@@ -45,7 +47,8 @@ def init_db():
             user=config.DB_USER,
             password=config.DB_PASSWORD,
             database=config.DB_NAME,
-            ssl_ca=_get_ssl_config(config).get('ca')
+            ssl_ca=_get_ssl_config(config).get('ca'),
+            connection_timeout=10
         )
         cursor = conn.cursor()
 
