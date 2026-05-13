@@ -1,4 +1,5 @@
 let myChart = null;
+let isHeatmap = false;
 
 async function apiCall(url, method, body) {
     try {
@@ -52,6 +53,30 @@ async function loadUserInfo() {
     }
 }
 
+function showDownloadButton() {
+    document.getElementById('download-chart-section').classList.remove('hidden');
+}
+
+function hideDownloadButton() {
+    document.getElementById('download-chart-section').classList.add('hidden');
+}
+
+function downloadChart() {
+    const canvas = document.getElementById('chart-canvas');
+    if (!canvas) { alert('No chart to download.'); return; }
+    const ctx = canvas.getContext('2d');
+    const originalFill = ctx.fillStyle;
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-over';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+    const link = document.createElement('a');
+    link.download = `apollo_chart_${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+
 const chartColors = ['#6c63ff', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#8b5cf6', '#14b8a6', '#f97316', '#6366f1'];
 
 function getChartColors() {
@@ -73,6 +98,9 @@ async function generateChart() {
         return;
     }
 
+    hideDownloadButton();
+    isHeatmap = false;
+
     const resultDiv = document.getElementById('chart-result');
     resultDiv.classList.remove('hidden');
     resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Generating chart...</p></div>';
@@ -86,12 +114,13 @@ async function generateChart() {
     }
 
     if (chartType === 'heatmap') {
-        resultDiv.innerHTML = '<div class="card"><div class="chart-container"><canvas id="chart-canvas"></canvas></div></div>';
+        isHeatmap = true;
+        resultDiv.innerHTML = '<div class="card"><div class="chart-container"><canvas id="chart-canvas"></canvas></div><div id="download-chart-section" class="hidden" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);text-align:center;"><button class="btn btn-primary btn-sm" onclick="downloadChart()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download Chart (PNG)</button></div></div>';
         renderHeatmapTable(data.chart_data);
         return;
     }
 
-    resultDiv.innerHTML = '<div class="card"><div class="chart-container"><canvas id="chart-canvas"></canvas></div></div>';
+    resultDiv.innerHTML = '<div class="card"><div class="chart-container"><canvas id="chart-canvas"></canvas></div><div id="download-chart-section" class="hidden" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);text-align:center;"><button class="btn btn-primary btn-sm" onclick="downloadChart()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download Chart (PNG)</button></div></div>';
     const ctx = document.getElementById('chart-canvas').getContext('2d');
     if (myChart) { myChart.destroy(); myChart = null; }
 
@@ -118,6 +147,7 @@ async function generateChart() {
                 plugins: { legend: { labels: { color: colors.text } } }
             }
         });
+        showDownloadButton();
         return;
     }
 
@@ -151,6 +181,7 @@ async function generateChart() {
                 }
             }
         });
+        showDownloadButton();
         return;
     }
 
@@ -180,32 +211,65 @@ async function generateChart() {
     }
 
     myChart = new Chart(ctx, chartConfig);
+    showDownloadButton();
 }
 
 function renderHeatmapTable(cd) {
-    const resultDiv = document.getElementById('chart-result');
     if (!cd.labels || !cd.data) {
-        resultDiv.innerHTML = '<p style="color:var(--text-muted);padding:20px;">Not enough data for heatmap.</p>';
+        document.getElementById('chart-result').innerHTML = '<p style="color:var(--text-muted);padding:20px;">Not enough data for heatmap.</p>';
         return;
     }
 
+    const canvas = document.getElementById('chart-canvas');
     const labels = cd.labels;
     const data = cd.data;
-    let html = '<div class="table-container" style="overflow-x:auto;"><table style="min-width:auto;">';
-    html += '<thead><tr><th></th>';
-    labels.forEach(l => { html += `<th style="writing-mode:vertical-lr;text-align:left;font-size:11px;padding:4px 8px;">${l}</th>`; });
-    html += '</tr></thead><tbody>';
-    data.forEach((row, i) => {
-        html += `<tr><td style="font-weight:600;font-size:11px;padding:4px 8px;">${labels[i]}</td>`;
-        row.forEach(val => {
+    const cellSize = 60;
+    const padding = 10;
+    const headerSize = 30;
+    const width = labels.length * cellSize + headerSize;
+    const height = labels.length * cellSize + headerSize;
+
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#1a1a2e';
+
+    for (let i = 0; i < labels.length; i++) {
+        ctx.save();
+        ctx.translate(headerSize / 2, headerSize + i * cellSize + cellSize / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText(labels[i], 0, 0);
+        ctx.restore();
+
+        ctx.fillText(labels[i], headerSize + i * cellSize + cellSize / 2, headerSize / 2);
+    }
+
+    for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].length; j++) {
+            const val = data[i][j];
             const abs = Math.abs(val);
-            const color = val >= 0 ? `rgba(16, 185, 129, ${abs})` : `rgba(239, 68, 68, ${abs})`;
-            html += `<td style="background:${color};text-align:center;padding:8px;font-weight:600;color:${abs > 0.5 ? 'white' : 'var(--text-primary)'};">${val}</td>`;
-        });
-        html += '</tr>';
-    });
-    html += '</tbody></table></div>';
-    resultDiv.innerHTML = html;
+            const r = val >= 0 ? 16 : 239;
+            const g = val >= 0 ? 185 : 68;
+            const b = val >= 0 ? 129 : 68;
+            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${abs})`;
+            ctx.fillRect(headerSize + j * cellSize, headerSize + i * cellSize, cellSize, cellSize);
+            ctx.strokeStyle = '#e2e4ec';
+            ctx.lineWidth = 0.5;
+            ctx.strokeRect(headerSize + j * cellSize, headerSize + i * cellSize, cellSize, cellSize);
+            ctx.fillStyle = abs > 0.5 ? '#ffffff' : '#1a1a2e';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText(val.toFixed(2), headerSize + j * cellSize + cellSize / 2, headerSize + i * cellSize + cellSize / 2);
+        }
+    }
+
+    showDownloadButton();
 }
 
 document.getElementById('dataset-select').addEventListener('change', loadColumns);
