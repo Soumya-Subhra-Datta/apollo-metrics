@@ -11,8 +11,6 @@ async function apiCall(url, method, body) {
 }
 
 function logout() { apiCall('/api/auth/logout', 'GET').then(() => { window.location.href = '/login'; }); }
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-
 async function loadUploads() {
     const { ok, data } = await apiCall('/api/uploads', 'GET');
     if (!ok) {

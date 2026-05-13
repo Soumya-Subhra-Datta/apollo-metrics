@@ -924,10 +924,235 @@ tbody tr:hover {
     gap: 8px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Sidebar overlay for mobile */
+#sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 99;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+
+#sidebar-overlay.active {
+    display: block;
+}
+
+/* =============================================
+   Responsive Design - Mobile First
+   ============================================= */
+
+/* --- Small phones (< 480px) --- */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 28px 20px;
+    }
+
+    .auth-logo h1 {
+        font-size: 22px;
+    }
+
+    .auth-logo p {
+        font-size: 12px;
+    }
+
+    .auth-card h2 {
+        font-size: 18px;
+        margin-bottom: 18px;
+    }
+
     .sidebar {
         transform: translateX(-100%);
+        width: 100%;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .main-header {
+        padding: 0 12px;
+        height: 56px;
+    }
+
+    .header-left h1 {
+        font-size: 16px;
+    }
+
+    .theme-toggle {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .content-area {
+        padding: 16px 12px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .card-header h3 {
+        font-size: 14px;
+    }
+
+    .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-number {
+        font-size: 22px;
+    }
+
+    .stat-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .quick-actions {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .quick-action-btn {
+        padding: 14px 10px;
+        font-size: 12px;
+    }
+
+    .quick-action-btn .icon-wrap {
+        width: 40px;
+        height: 40px;
+    }
+
+    .quick-action-btn .icon-wrap svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .upload-zone {
+        padding: 40px 16px;
+    }
+
+    .upload-zone .icon-wrap {
+        width: 56px;
+        height: 56px;
+    }
+
+    .upload-zone h3 {
+        font-size: 15px;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+
+    .query-input-area {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .query-input-area input {
+        padding: 12px 14px;
+    }
+
+    .query-input-area button {
+        width: 100%;
+    }
+
+    .query-answer {
+        padding: 14px;
+        font-size: 13px;
+    }
+
+    .model-result-card {
+        padding: 14px;
+    }
+
+    .metric-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .metric-item {
+        padding: 10px;
+    }
+
+    .metric-value {
+        font-size: 16px;
+    }
+
+    .insight-card {
+        padding: 12px 14px;
+        font-size: 12px;
+    }
+
+    .tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tab {
+        padding: 8px 14px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .section-title {
+        font-size: 16px;
+    }
+
+    .table-container table {
+        font-size: 12px;
+    }
+
+    thead th,
+    tbody td {
+        padding: 8px 10px;
+    }
+
+    .loading {
+        padding: 24px;
+    }
+
+    .summary-card {
+        padding: 14px;
+    }
+
+    .section-desc {
+        font-size: 12px;
+    }
+}
+
+/* --- Tablets (481px - 768px) --- */
+@media (min-width: 481px) and (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
     }
 
     .sidebar.open {
@@ -943,23 +1168,60 @@ tbody tr:hover {
     }
 
     .content-area {
-        padding: 20px 16px;
+        padding: 20px 20px;
     }
 
     .main-header {
-        padding: 0 16px;
+        padding: 0 20px;
     }
 
     .grid-2, .grid-3 {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
 
     .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
     }
 
     .quick-actions {
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    .metric-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* --- Small desktops (769px - 1024px) --- */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .main-content {
+        margin-left: 220px;
+    }
+
+    .content-area {
+        padding: 24px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-3 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .chart-container {
+        height: 300px;
     }
 }
 

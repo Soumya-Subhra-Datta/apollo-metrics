@@ -16,10 +16,6 @@ function logout() {
     });
 }
 
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-}
-
 async function loadDashboard() {
     const { ok, data } = await apiCall('/api/dashboard/summary', 'GET');
     if (!ok) {

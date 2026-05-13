@@ -16,6 +16,26 @@ function toggleTheme() {
     setTheme(current === 'dark' ? 'light' : 'dark');
 }
 
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (!sidebar) return;
+    const isOpen = sidebar.classList.toggle('open');
+    if (overlay) {
+        overlay.classList.toggle('active', isOpen);
+    }
+}
+
 (function initTheme() {
     setTheme(getTheme());
+    const overlay = document.createElement('div');
+    overlay.id = 'sidebar-overlay';
+    overlay.addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+            sidebar.classList.remove('open');
+        }
+        overlay.classList.remove('active');
+    });
+    document.body.appendChild(overlay);
 })();
