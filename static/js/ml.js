@@ -15,26 +15,35 @@ async function loadDatasets() {
     const { ok, data } = await apiCall('/api/uploads', 'GET');
     if (!ok) { if (data.error && data.error.includes('Authentication')) { window.location.href = '/login'; } return; }
     const select = document.getElementById('dataset-select');
-    if (data.uploads) {
-        data.uploads.forEach(u => {
-            const opt = document.createElement('option');
-            opt.value = u.id;
-            opt.textContent = `${u.file_name} (${u.total_rows} rows)`;
-            select.appendChild(opt);
-        });
+    const statusEl = document.getElementById('ml-status');
+    if (!data.uploads || data.uploads.length === 0) {
+        statusEl.innerHTML = '<div class="alert alert-info">No datasets uploaded yet. Go to <a href="/upload">Upload Dataset</a> to add one.</div>';
+        return;
     }
+    statusEl.innerHTML = '';
+    data.uploads.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id;
+        opt.textContent = `${u.file_name} (${u.total_rows} rows)`;
+        select.appendChild(opt);
+    });
 }
 
 async function loadColumns() {
     const uploadId = document.getElementById('dataset-select').value;
-    if (!uploadId) return;
+    const statusEl = document.getElementById('ml-status');
+    if (!uploadId) { statusEl.innerHTML = ''; return; }
+    statusEl.innerHTML = '<div class="loading"><div class="spinner"></div>Loading columns...</div>';
     const { ok, data } = await apiCall(`/api/uploads/${uploadId}`, 'GET');
     const sel = document.getElementById('target-column');
     sel.innerHTML = '<option value="">-- None (Clustering) --</option>';
+    statusEl.innerHTML = '';
     if (ok && data.columns) {
         data.columns.forEach(c => {
             sel.innerHTML += `<option value="${c.name}">${c.name} (${c.dtype})</option>`;
         });
+    } else {
+        statusEl.innerHTML = `<div class="alert alert-error">${data.error || 'Could not load columns for this dataset. The file may have been lost during server restart.'}</div>`;
     }
 }
 
