@@ -1,0 +1,61 @@
+customer_id,gender,age,tenure,monthly_charges,contract_type,churn
+C001,Male,45,12,89.5,Month-to-month,Yes
+C002,Female,34,24,75.2,One year,No
+C003,Male,28,6,120.3,Month-to-month,Yes
+C004,Female,52,48,65.0,Two year,No
+C005,Male,41,18,95.8,Month-to-month,No
+C006,Female,37,36,78.4,One year,No
+C007,Male,55,3,150.2,Month-to-month,Yes
+C008,Female,29,60,55.0,Two year,No
+C009,Male,33,9,110.5,Month-to-month,Yes
+C010,Female,48,30,72.8,One year,No
+C011,Male,31,15,88.9,Month-to-month,Yes
+C012,Female,42,42,68.3,Two year,No
+C013,Male,38,21,92.5,Month-to-month,No
+C014,Female,50,7,135.0,Month-to-month,Yes
+C015,Male,44,54,58.2,Two year,No
+C016,Female,27,33,82.1,One year,No
+C017,Male,39,2,160.4,Month-to-month,Yes
+C018,Female,46,27,71.6,One year,No
+C019,Male,35,11,105.3,Month-to-month,Yes
+C020,Female,53,45,62.0,Two year,No
+C021,Male,30,8,115.7,Month-to-month,Yes
+C022,Female,43,39,69.4,One year,No
+C023,Male,47,14,87.2,Month-to-month,No
+C024,Female,36,51,56.8,Two year,No
+C025,Male,51,5,140.1,Month-to-month,Yes
+C026,Female,32,20,78.9,Month-to-month,No
+C027,Male,26,28,96.4,One year,No
+C028,Female,49,4,145.6,Month-to-month,Yes
+C029,Male,40,40,66.3,Two year,No
+C030,Female,54,16,102.8,Month-to-month,Yes
+C031,Male,25,10,108.9,Month-to-month,Yes
+C032,Female,56,55,59.1,Two year,No
+C033,Male,22,13,93.7,Month-to-month,Yes
+C034,Female,38,38,74.5,One year,No
+C035,Male,43,22,85.6,Month-to-month,No
+C036,Female,31,47,63.2,Two year,No
+C037,Male,58,1,170.3,Month-to-month,Yes
+C038,Female,24,25,77.8,One year,No
+C039,Male,36,19,90.1,Month-to-month,Yes
+C040,Female,59,50,61.4,Two year,No
+C041,Male,23,17,95.2,Month-to-month,Yes
+C042,Female,57,44,64.7,Two year,No
+C043,Male,27,29,83.5,One year,No
+C044,Female,60,6,155.9,Month-to-month,Yes
+C045,Male,21,23,80.4,Month-to-month,Yes
+C046,Female,33,35,76.1,One year,No
+C047,Male,49,31,88.3,One year,No
+C048,Female,44,43,67.9,Two year,No
+C049,Male,17,26,82.7,One year,No
+C050,Female,63,34,73.6,One year,No
+C051,Male,54,37,71.2,One year,No
+C052,Female,39,41,66.5,Two year,No
+C053,Male,29,46,60.8,Two year,No
+C054,Female,47,52,57.3,Two year,No
+C055,Male,61,56,54.2,Two year,No
+C056,Female,35,49,62.5,Two year,No
+C057,Male,32,11,112.4,Month-to-month,Yes
+C058,Female,41,32,79.8,One year,No
+C059,Male,46,28,84.2,One year,No
+C060,Female,62,53,58.7,Two year,No

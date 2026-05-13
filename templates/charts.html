@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charts - Apollo Metrics</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Apollo Metrics</h2>
+                <p>Data Analytics Platform</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+                <a href="/upload" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload Dataset</a>
+                <a href="/eda" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Auto EDA</a>
+                <a href="/charts" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Charts</a>
+                <a href="/ml" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>ML Models</a>
+                <a href="/query" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Ask AI</a>
+                <a href="/reports" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Reports</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="sidebar-avatar">U</div>
+                    <div class="user-details">
+                        <div class="name" id="sidebar-name">User</div>
+                        <div class="email" id="sidebar-email">user@email.com</div>
+                    </div>
+                </div>
+                <button class="btn btn-outline btn-sm" style="width:100%;" onclick="logout()">Sign Out</button>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
+                    <h1>Chart Generation</h1>
+                </div>
+                <div class="header-right">
+                    <button class="theme-toggle" onclick="toggleTheme()"><span id="theme-label">Dark</span></button>
+                </div>
+            </header>
+            <div class="content-area">
+                <div class="section">
+                    <div class="card">
+                        <div class="card-header"><h3>Configure Chart</h3></div>
+                        <div class="grid-3" style="align-items:end;">
+                            <div class="form-group">
+                                <label>Dataset</label>
+                                <select id="dataset-select"><option value="">-- Select --</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Chart Type</label>
+                                <select id="chart-type">
+                                    <option value="bar">Bar Chart</option>
+                                    <option value="line">Line Chart</option>
+                                    <option value="pie">Pie Chart</option>
+                                    <option value="histogram">Histogram</option>
+                                    <option value="scatter">Scatter Plot</option>
+                                    <option value="box">Box Plot</option>
+                                    <option value="heatmap">Correlation Heatmap</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>X-Axis</label>
+                                <select id="x-column"><option value="">-- Select --</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Y-Axis (optional)</label>
+                                <select id="y-column"><option value="">-- None --</option></select>
+                            </div>
+                            <div style="padding-top:6px;">
+                                <button class="btn btn-primary" onclick="generateChart()">Generate Chart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="chart-result" class="hidden">
+                    <div class="card">
+                        <div class="chart-container">
+                            <canvas id="chart-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/static/js/theme.js"></script>
+    <script src="/static/js/charts.js"></script>
+</body>
+</html>

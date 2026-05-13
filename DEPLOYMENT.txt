@@ -1,0 +1,193 @@
+================================================================================
+  APOLLO METRICS - COMPLETE DEPLOYMENT GUIDE (Render.com + Free MySQL)
+================================================================================
+
+This guide walks through deploying Apollo Metrics on Render.com using a free
+external MySQL database (since Render does not offer managed MySQL for free).
+
+
+=========================================================================
+  STEP 1: Prerequisites
+=========================================================================
+
+  (a) GitHub account          - https://github.com
+  (b) Render account          - https://render.com (sign up with GitHub)
+  (c) Free MySQL provider     - Pick ONE:
+        - PlanetScale  → https://planetscale.com  (5GB free, no card needed)
+        - Aiven         → https://aiven.io        (5GB free, no card needed)
+        - TiDB Cloud    → https://tidbcloud.com   (MySQL-compatible, 5GB free)
+  (d) Free Groq API key       - https://console.groq.com (for LLM features)
+
+
+=========================================================================
+  STEP 2: Prepare the Repository on GitHub
+=========================================================================
+
+  1. Open a terminal in the project folder:
+
+       cd C:\Users\soumy\OneDrive\Desktop\apollo-metrics
+
+  2. Initialize Git and push to GitHub:
+
+       git init
+       git add .
+       git commit -m "Initial commit"
+       git branch -M main
+       git remote add origin https://github.com/YOUR_USERNAME/apollo-metrics.git
+       git push -u origin main
+
+     (Replace YOUR_USERNAME with your actual GitHub username)
+
+
+=========================================================================
+  STEP 3: Set Up Free MySQL Database
+=========================================================================
+
+  ------------
+  Option A: PlanetScale (Recommended - easiest)
+  ------------
+
+  1. Go to https://planetscale.com and sign up (GitHub login)
+  2. Click "Create database" → name it "apollo_metrics"
+  3. Select region closest to Render's Oregon region
+  4. Once created, click "Connect" → select "Connect with" → "General"
+  5. Copy the credentials displayed:
+
+       ├─ Hostname:     us-east.connect.psdb.cloud
+       ├─ Port:         3306
+       ├─ Username:     xxxxxxxx
+       ├─ Password:     xxxxxxxx
+       └─ Database:     apollo_metrics
+
+  6. IMPORTANT: In PlanetScale dashboard → Settings → "Safe migrations"
+     → Turn OFF "Protect main branch" (otherwise CREATE TABLE will fail).
+
+  7. Note down PlanetScale's CA certificate (or simply set MYSQL_SSL_CA
+     to the cert path). For PlanetScale, SSL is always required.
+
+  ------------
+  Option B: Aiven
+  ------------
+
+  1. Go to https://aiven.io and sign up (free tier, no credit card)
+  2. Create a new service → MySQL → Free plan → pick region
+  3. Once ready, go to "Connection information" → copy host, port, user, password
+  4. Download the CA certificate from the Aiven dashboard
+  5. Database name: "defaultdb" (Aiven creates this automatically)
+
+
+=========================================================================
+  STEP 4: Deploy on Render
+=========================================================================
+
+  4a. Upload repo to Render
+
+      1. Go to https://dashboard.render.com
+      2. Click "New +" → "Blueprint"
+      3. Connect your GitHub account
+      4. Find "apollo-metrics" repo → click "Connect"
+      5. Render reads render.yaml and shows the web service config
+      6. Click "Apply" → Render starts building and deploying
+
+  4b. Set environment variables manually in Render dashboard
+
+      After deploy starts OR fails (it will fail because DB vars are missing):
+
+      1. In Render dashboard → go to your "apollo-metrics" web service
+      2. Click "Environment" tab
+      3. Add these variables (use the values from your MySQL provider):
+
+         ┌──────────────────────┬────────────────────────────────────────────┐
+         │ Key                  │ Value                                      │
+         ├──────────────────────┼────────────────────────────────────────────┤
+         │ FLASK_ENV            │ production                                 │
+         │ FLASK_DEBUG          │ 0                                          │
+         │ SECRET_KEY           │ (auto-generated, or set your own)          │
+         │ DB_HOST              │ <your mysql host>                          │
+         │ DB_PORT              │ 3306                                       │
+         │ DB_USER              │ <your mysql username>                      │
+         │ DB_PASSWORD          │ <your mysql password>                      │
+         │ DB_NAME              │ apollo_metrics (or your database name)     │
+         │ MYSQL_SSL_CA         │ (leave empty if not needed, or paste cert) │
+         │ LLM_API_KEY          │ gsk_... (your Groq key)                    │
+         │ LLM_API_BASE_URL     │ https://api.groq.com/openai/v1             │
+         │ LLM_MODEL_NAME       │ llama-3.3-70b-versatile                   │
+         └──────────────────────┴────────────────────────────────────────────┘
+
+      4. Click "Save Changes" → Render will redeploy automatically
+
+  4c. Verify deployment
+
+      1. Wait for deploy to finish (green "Live" badge)
+      2. Click the URL shown at the top of your service page
+      3. You should see the Apollo Metrics login page
+      4. Register a new account and test the features
+
+
+=========================================================================
+  STEP 5: Post-Deployment Checklist
+=========================================================================
+
+  [ ] Register a new account on the live app
+  [ ] Upload a sample CSV (from sample_data/ folder)
+  [ ] Run Auto EDA
+  [ ] Generate charts
+  [ ] Train an ML model
+  [ ] Ask a question via Ask AI
+  [ ] Generate and download a PDF report
+
+
+=========================================================================
+  IMPORTANT: Free Tier Limitations
+=========================================================================
+
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │ 1. Render free web services spin down after 15 minutes of          │
+  │    inactivity. The next request takes 30-60 seconds to cold start. │
+  │                                                                    │
+  │ 2. Render free tier gives 750 instance hours/month (~24/7 for      │
+  │    one service). If you go over, the service is suspended until    │
+  │    next month.                                                     │
+  │                                                                    │
+  │ 3. Ephemeral filesystem: Uploaded CSVs, trained models (.joblib),  │
+  │    and generated PDFs are lost on every restart/redeploy.          │
+  │    Database data (users, queries, history) is safe in MySQL.       │
+  │                                                                    │
+  │ 4. PlanetScale free tier: 5GB storage, 1 billion row reads/month,  │
+  │    10 million row writes/month.                                    │
+  │                                                                    │
+  │ 5. Groq free tier: 30 requests/minute, 14,400 requests/day.        │
+  └─────────────────────────────────────────────────────────────────────┘
+
+
+=========================================================================
+  USEFUL COMMANDS
+=========================================================================
+
+  View logs:       Render dashboard → Service → Logs tab
+  Trigger deploy:  Push to GitHub main branch (auto-deploy)
+  Manual restart:  Render dashboard → Service → Manual Deploy
+  SSH into app:    Render dashboard → Service → Shell tab
+
+
+=========================================================================
+  TROUBLESHOOTING
+=========================================================================
+
+  Problem: App starts but shows "Database connection failed"
+    → Check DB_HOST, DB_PORT, DB_USER, DB_PASSWORD env vars in Render
+    → If using PlanetScale, ensure "Protect main branch" is OFF
+    → If MySQL requires SSL, set MYSQL_SSL_CA or use SSL URL parameters
+
+  Problem: App loads but login/register returns 500
+    → Check Render logs (Service → Logs) for SQL errors
+    → The database tables are created automatically on startup via init_db()
+
+  Problem: 413 File too large
+    → Max upload is 50MB. Files are not persisted on restart.
+
+  Problem: LLM features return "not configured"
+    → Set LLM_API_KEY env var in Render dashboard
+    → Get a free key at https://console.groq.com
+
+================================================================================

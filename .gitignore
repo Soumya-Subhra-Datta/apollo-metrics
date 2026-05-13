@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project runtime folders
+uploads/*
+cleaned/*
+models/*
+reports/*
+!uploads/.gitkeep
+!cleaned/.gitkeep
+!models/.gitkeep
+!reports/.gitkeep
+
+# Logs
+*.log
+
+# Database
+*.sqlite3
+*.db
